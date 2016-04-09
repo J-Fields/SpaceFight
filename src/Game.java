@@ -12,6 +12,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
@@ -26,7 +27,8 @@ public class Game extends Thread implements KeyListener {
 	
     private GameState gameState = GameState.SPLASH;
     private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
-    
+    private SpaceShip player1;
+    private HashMap<Integer, Boolean> keysPressed = new HashMap<Integer, Boolean>();
     
     private Canvas canvas;
     private BufferStrategy strategy;
@@ -75,7 +77,8 @@ public class Game extends Thread implements KeyListener {
     }
     
     private void initGame() {
-    	gameObjects.add(new SpaceShip());
+    	player1 = new SpaceShip();
+    	gameObjects.add(player1);
     }
 
     private class FrameClose extends WindowAdapter {
@@ -150,6 +153,14 @@ public class Game extends Thread implements KeyListener {
     	case EXITED:
     		break;
     	case INGAME:
+    		if (keysPressed.containsKey(KeyEvent.VK_W) && keysPressed.get(KeyEvent.VK_W) == true)
+				player1.changeVel(0, -0.4);
+    		if (keysPressed.containsKey(KeyEvent.VK_A) && keysPressed.get(KeyEvent.VK_A) == true)
+				player1.changeVel(-0.4, 0);
+    		if (keysPressed.containsKey(KeyEvent.VK_S) && keysPressed.get(KeyEvent.VK_S) == true)
+				player1.changeVel(0, 0.4);
+    		if (keysPressed.containsKey(KeyEvent.VK_D) && keysPressed.get(KeyEvent.VK_D) == true)
+				player1.changeVel(0.4, 0);
     		for (GameObject obj : gameObjects) {
     			obj.update();
     		}
@@ -163,9 +174,9 @@ public class Game extends Thread implements KeyListener {
 		switch (gameState) {
 		case SPLASH:
 			
-		case PAUSED:
 		case EXITED:
 			break;
+		case PAUSED:
 		case INGAME:
     		for (GameObject obj : gameObjects) {
     			obj.render(g);
@@ -181,18 +192,30 @@ public class Game extends Thread implements KeyListener {
 	@Override
 	public void keyTyped(KeyEvent e) {
 		return;
-		
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		gameState = GameState.INGAME;
-		
+		switch (gameState) {
+		case SPLASH:
+			gameState = GameState.INGAME;
+			break;
+		case PAUSED:
+			if (e.getKeyChar() == 'p')
+				gameState = GameState.INGAME;
+			break;
+		case EXITED:
+		case INGAME:
+			if ((!keysPressed.containsKey('p') || keysPressed.get('p') == false) && e.getKeyChar() == 'p') {
+				gameState = GameState.PAUSED;
+			} else {
+				keysPressed.put(e.getKeyCode(), true);
+			}
+		}
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+		keysPressed.put(e.getKeyCode(), false);
 	}
 }

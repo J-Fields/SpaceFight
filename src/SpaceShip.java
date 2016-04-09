@@ -7,7 +7,7 @@ public class SpaceShip extends GameObject {
 	boolean isAlive, canShoot;
 	int lives, cool, heat;
 	public SpaceShip() {
-		super(0, 0, 3, 6, 80, 80);
+		super(100, 100, 0, 0, 80, 80);
 		try {
 			image = ImageIO.read(new File("resources/spaceship.png"));
 		} catch (IOException e) {
@@ -19,15 +19,19 @@ public class SpaceShip extends GameObject {
 		heat = 0;
 		canShoot = true;
 	}
-	public void move(double posX, double posY, double velX, double velY){
-	return;
+	
+	public void changeVel(double dXVel, double dYVel) {
+		velX += dXVel;
+		velY += dYVel;
 	}
+	
 	public void shoot(int cool, int heat, boolean canShoot){ 
 		/*every second cool goes up by 1; every time you shoot heat 
 		goes up by 1  */
 		if(heat > cool)
 			canShoot = false;
 	}
+
 	public void gettingHit(int cool, int heat){
 		//if collision
 		lives--;

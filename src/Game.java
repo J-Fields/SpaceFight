@@ -154,13 +154,13 @@ public class Game extends Thread implements KeyListener {
     		break;
     	case INGAME:
     		if (keysPressed.containsKey(KeyEvent.VK_W) && keysPressed.get(KeyEvent.VK_W) == true)
-				player1.changeVel(0, -0.4);
+				player1.accelerate();
     		if (keysPressed.containsKey(KeyEvent.VK_A) && keysPressed.get(KeyEvent.VK_A) == true)
-				player1.changeVel(-0.4, 0);
+				player1.rotate(-1);
     		if (keysPressed.containsKey(KeyEvent.VK_S) && keysPressed.get(KeyEvent.VK_S) == true)
-				player1.changeVel(0, 0.4);
+				player1.decelerate();
     		if (keysPressed.containsKey(KeyEvent.VK_D) && keysPressed.get(KeyEvent.VK_D) == true)
-				player1.changeVel(0.4, 0);
+				player1.rotate(1);
     		for (GameObject obj : gameObjects) {
     			obj.update();
     		}

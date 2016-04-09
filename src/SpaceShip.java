@@ -20,9 +20,35 @@ public class SpaceShip extends GameObject {
 		canShoot = true;
 	}
 	
-	public void changeVel(double dXVel, double dYVel) {
-		velX += dXVel;
-		velY += dYVel;
+	public void update() {
+		super.update();
+		double slowDown = .04;
+		if (velX > slowDown)
+			velX -= slowDown;
+		else if (velX < -slowDown)
+			velX += slowDown;
+		else
+			velX = 0;
+		if (velY > slowDown)
+			velY -= slowDown;
+		else if (velY < -slowDown)
+			velY += slowDown;
+		else
+			velY = 0;
+	}
+	
+	public void accelerate() {
+		velX += Math.cos(rotation)*.3;
+		velY += Math.sin(rotation)*.3;
+	}
+
+	public void decelerate() {
+		velX -= Math.cos(rotation)*.3;
+		velY -= Math.sin(rotation)*.3;
+	}
+
+	public void rotate(int direction) {
+		rotation += direction*.06;
 	}
 	
 	public void shoot(int cool, int heat, boolean canShoot){ 

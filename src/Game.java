@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.KeyEvent;
@@ -11,9 +12,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -42,6 +46,8 @@ public class Game extends Thread implements KeyListener {
     		GraphicsEnvironment.getLocalGraphicsEnvironment()
     			.getDefaultScreenDevice()
     			.getDefaultConfiguration();
+	private BufferedImage splashImage;
+	
 
     // create a hardware accelerated image
     public final BufferedImage create(final int width, final int height,
@@ -173,7 +179,12 @@ public class Game extends Thread implements KeyListener {
     	g.fillRect(0, 0, width, height);
 		switch (gameState) {
 		case SPLASH:
-			
+			try {
+				splashImage = ImageIO.read(new File("resources/SpaceDuel.JPEG"));
+			} catch (IOException e) {
+				System.out.println("Could not read the file");
+			}
+			g.drawImage(splashImage, 0, 0, null);
 		case EXITED:
 			break;
 		case PAUSED:

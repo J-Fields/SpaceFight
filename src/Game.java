@@ -25,6 +25,7 @@ public class Game extends Thread {
     private GameState gameState = GameState.INGAME;
     private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
     
+    
     private Canvas canvas;
     private BufferStrategy strategy;
     private BufferedImage background;

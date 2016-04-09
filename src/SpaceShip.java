@@ -43,8 +43,19 @@ public class SpaceShip extends GameObject {
 	}
 
 	public void decelerate() {
-		velX -= Math.cos(rotation)*.3;
-		velY -= Math.sin(rotation)*.3;
+		double slowDown = .15;
+		if (velX > slowDown)
+			velX -= slowDown;
+		else if (velX < -slowDown)
+			velX += slowDown;
+		else
+			velX = 0;
+		if (velY > slowDown)
+			velY -= slowDown;
+		else if (velY < -slowDown)
+			velY += slowDown;
+		else
+			velY = 0;
 	}
 
 	public void rotate(int direction) {

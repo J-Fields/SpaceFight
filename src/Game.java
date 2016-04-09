@@ -3,7 +3,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Transparency;
 import java.awt.event.KeyEvent;
@@ -219,10 +218,9 @@ public class Game extends Thread implements KeyListener {
 		case INGAME:
 			if ((!keysPressed.containsKey('p') || keysPressed.get('p') == false) && e.getKeyChar() == 'p') {
 				gameState = GameState.PAUSED;
-			} else {
-				keysPressed.put(e.getKeyCode(), true);
 			}
 		}
+		keysPressed.put(e.getKeyCode(), true);
 	}
 
 	@Override

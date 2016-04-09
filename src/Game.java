@@ -9,12 +9,22 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
 public class Game extends Thread {
-    private boolean isRunning = true;
+	public enum GameState {
+		SPLASH,
+		EXITED,
+		PAUSED,
+		INGAME
+	}
+	
+    private GameState gameState = GameState.INGAME;
+    private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
+    
     private Canvas canvas;
     private BufferStrategy strategy;
     private BufferedImage background;
@@ -27,8 +37,6 @@ public class Game extends Thread {
     		GraphicsEnvironment.getLocalGraphicsEnvironment()
     			.getDefaultScreenDevice()
     			.getDefaultConfiguration();
-    
-    private float x=-50, y=-50;
 
     // create a hardware accelerated image
     public final BufferedImage create(final int width, final int height,
@@ -39,6 +47,8 @@ public class Game extends Thread {
 
     // Setup
     public Game() {
+    	initGame();
+
     	// JFrame
     	frame = new JFrame();
     	frame.addWindowListener(new FrameClose());
@@ -59,11 +69,15 @@ public class Game extends Thread {
     	} while (strategy == null);
     	start();
     }
+    
+    private void initGame() {
+    	gameObjects.add(new SpaceShip());
+    }
 
     private class FrameClose extends WindowAdapter {
     	@Override
     	public void windowClosing(final WindowEvent e) {
-    		isRunning = false;
+    		gameState = GameState.EXITED;
     	}
     }
 
@@ -97,14 +111,14 @@ public class Game extends Thread {
     public void run() {
     	backgroundGraphics = (Graphics2D) background.getGraphics();
     	long fpsWait = (long) (1.0 / 30 * 1000);
-    	main: while (isRunning) {
+    	main: while (gameState != GameState.EXITED) {
     		long renderStart = System.nanoTime();
     		updateGame();
 
     		// Update Graphics
     		do {
     			Graphics2D bg = getBuffer();
-    			if (!isRunning) {
+    			if (gameState == GameState.EXITED) {
     				break main;
     			}
     			renderGame(backgroundGraphics);
@@ -126,15 +140,33 @@ public class Game extends Thread {
     }
 
     public void updateGame() {
-    	x+=2;
-    	y+=2;
+    	switch (gameState) {
+    	case SPLASH:
+    	case PAUSED:
+    	case EXITED:
+    		break;
+    	case INGAME:
+    		for (GameObject obj : gameObjects) {
+    			obj.update();
+    		}
+    		break;
+    	}
     }
 
     public void renderGame(Graphics2D g) {
     	g.setColor(Color.BLACK);
     	g.fillRect(0, 0, width, height);
-    	g.setColor(Color.WHITE);
-    	g.fillRect((int)x, (int)y, 100, 100);
+		switch (gameState) {
+		case SPLASH:
+		case PAUSED:
+		case EXITED:
+			break;
+		case INGAME:
+    		for (GameObject obj : gameObjects) {
+    			obj.render(g);
+    		}
+			break;
+		}
     }
     
     public static void main(final String[] args) {

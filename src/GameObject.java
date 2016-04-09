@@ -1,32 +1,34 @@
-import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
 
-public class GameObject {
-	int posX;
-	int posY;
-	int speed;
-	int direction;
-	int width;
-	int height;
-	static boolean image;
+public abstract class GameObject {
+	protected double posX;
+	protected double posY;
+	protected double velX;
+	protected double velY;
+	protected double rotation;
+	protected int width;
+	protected int height;
+	protected BufferedImage image;
 	
-	
-	public GameObject(int posX, int posY, int speed, int direction, int width, int height, boolean image){
-		posX = 0;
-		posY = 0;
-		speed = 0;
-		direction = 0;
-		width = 5;
-		height = 5;
-		image = true;
+	public GameObject(double posX, double posY, double velX, double velY, int width, int height, BufferedImage image){
+		this.posX = posX;
+		this.posY = posY;
+		this.velX = velX;
+		this.velY = velY;
+		this.width = width;
+		this.height = height;
+		this.image = image;
 	}
 		
 	public void update() {
-    	
+		posX += velX;
+		posY += velY;
     }
-	public void renderGame(Graphics2D g) {
-    	
+
+	public void render(Graphics2D g) {
+		g.setColor(Color.CYAN);
+		g.fillRect((int)posX, (int)posY, width, height);
     }
-	
-	
 }

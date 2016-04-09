@@ -19,8 +19,8 @@ public class SpaceShip extends GameObject {
 		heat = 0;
 		canShoot = true;
 	}
-	public move(double posX, double posY, double velX, double velY){
-		
+	public void move(double posX, double posY, double velX, double velY){
+	return;
 	}
 	public void shoot(int cool, int heat, boolean canShoot){ 
 		/*every second cool goes up by 1; every time you shoot heat 

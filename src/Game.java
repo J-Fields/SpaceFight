@@ -5,6 +5,8 @@ import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.Transparency;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -14,7 +16,7 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-public class Game extends Thread {
+public class Game extends Thread implements KeyListener {
 	public enum GameState {
 		SPLASH,
 		EXITED,
@@ -22,7 +24,7 @@ public class Game extends Thread {
 		INGAME
 	}
 	
-    private GameState gameState = GameState.INGAME;
+    private GameState gameState = GameState.SPLASH;
     private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
     
     
@@ -56,6 +58,7 @@ public class Game extends Thread {
     	frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     	frame.setSize(width, height);
     	frame.setVisible(true);
+    	frame.addKeyListener(this);
 
     	// Canvas
     	canvas = new Canvas(config);
@@ -159,6 +162,7 @@ public class Game extends Thread {
     	g.fillRect(0, 0, width, height);
 		switch (gameState) {
 		case SPLASH:
+			
 		case PAUSED:
 		case EXITED:
 			break;
@@ -173,4 +177,22 @@ public class Game extends Thread {
     public static void main(final String[] args) {
     	new Game();
     }
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		return;
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		gameState = GameState.INGAME;
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }

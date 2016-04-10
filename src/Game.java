@@ -191,6 +191,7 @@ public class Game extends Thread implements KeyListener {
     			obj.update();
     		}
     		break;
+    		
     	}
     }
 

@@ -36,6 +36,8 @@ public class SpaceShip extends GameObject {
 			velY += slowDown;
 		else
 			velY = 0;
+		velY = bounceOffCeiling(posY);
+		velX = bounceOffWall(posX);
 	}
 	
 	public void accelerate() {
@@ -77,11 +79,16 @@ public class SpaceShip extends GameObject {
 			isAlive = false;
 			
 	}
-	public double bounce(double velY, double velX){
-		if (height - posY == 0)
-			return -velY;	 
-		else
+	public double bounceOffCeiling(double posY){
+		if (posY < 0 || posY > height)
+			return -velY;
+			return velY;
+	}	
+	public double bounceOffWall(double posX){	
+		if(posX < 0 || posX > width)
 			return -velX;	
+			return velX;
 	}
+	
 	
 }

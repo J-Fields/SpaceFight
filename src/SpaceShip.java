@@ -6,8 +6,9 @@ import javax.imageio.ImageIO;
 public class SpaceShip extends GameObject {
 	boolean isAlive, canShoot;
 	int lives, cool, heat;
-	public SpaceShip() {
-		super(100, 100, 0, 0, 80, 80);
+	public SpaceShip(double startX, double startY, double startRot) {
+		super(startX, startY, 0, 0, 80, 80);
+		rotation = startRot;
 		try {
 			image = ImageIO.read(new File("resources/spaceship.png"));
 		} catch (IOException e) {

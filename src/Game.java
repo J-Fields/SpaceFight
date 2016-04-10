@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -19,6 +20,8 @@ import java.util.HashMap;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
+
+import javafx.scene.input.KeyCode;
 
 public class Game extends Thread implements KeyListener {
 	public enum GameState {
@@ -31,6 +34,7 @@ public class Game extends Thread implements KeyListener {
     private GameState gameState = GameState.SPLASH;
     private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
     private SpaceShip player1;
+    private SpaceShip player2;
     private HashMap<Integer, Boolean> keysPressed = new HashMap<Integer, Boolean>();
     
     private Canvas canvas;
@@ -82,8 +86,15 @@ public class Game extends Thread implements KeyListener {
     }
     
     private void initGame() {
-    	player1 = new SpaceShip();
+		try {
+			splashImage = ImageIO.read(new File("resources/SpaceDuel.JPEG"));
+		} catch (IOException e) {
+			System.out.println("Could not read the file");
+		}
+    	player1 = new SpaceShip(200, 200, Math.PI/4.0);
     	gameObjects.add(player1);
+    	player2 = new SpaceShip(width-200, height-200, 5.0*Math.PI/4.0);
+    	gameObjects.add(player2);
     }
 
     private class FrameClose extends WindowAdapter {
@@ -166,6 +177,16 @@ public class Game extends Thread implements KeyListener {
 				player1.decelerate();
     		if (keysPressed.containsKey(KeyEvent.VK_D) && keysPressed.get(KeyEvent.VK_D) == true)
 				player1.rotate(1);
+
+    		if (keysPressed.containsKey(KeyEvent.VK_UP) && keysPressed.get(KeyEvent.VK_UP) == true)
+				player2.accelerate();
+    		if (keysPressed.containsKey(KeyEvent.VK_LEFT) && keysPressed.get(KeyEvent.VK_LEFT) == true)
+				player2.rotate(-1);
+    		if (keysPressed.containsKey(KeyEvent.VK_DOWN) && keysPressed.get(KeyEvent.VK_DOWN) == true)
+				player2.decelerate();
+    		if (keysPressed.containsKey(KeyEvent.VK_RIGHT) && keysPressed.get(KeyEvent.VK_RIGHT) == true)
+				player2.rotate(1);
+
     		for (GameObject obj : gameObjects) {
     			obj.update();
     		}
@@ -178,12 +199,9 @@ public class Game extends Thread implements KeyListener {
     	g.fillRect(0, 0, width, height);
 		switch (gameState) {
 		case SPLASH:
-			try {
-				splashImage = ImageIO.read(new File("resources/SpaceDuel.JPEG"));
-			} catch (IOException e) {
-				System.out.println("Could not read the file");
-			}
-			g.drawImage(splashImage, 0, 0, null);
+			AffineTransform transform = new AffineTransform();
+			transform.scale((double)width/(double)splashImage.getWidth(), (double)height/(double)splashImage.getHeight());
+			g.drawImage(splashImage, transform, null);
 		case EXITED:
 			break;
 		case PAUSED:
@@ -193,10 +211,6 @@ public class Game extends Thread implements KeyListener {
     		}
 			break;
 		}
-    }
-    
-    public static void main(final String[] args) {
-    	new Game();
     }
 
 	@Override
@@ -208,7 +222,8 @@ public class Game extends Thread implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		switch (gameState) {
 		case SPLASH:
-			gameState = GameState.INGAME;
+			if(e.getKeyCode() == KeyEvent.VK_SPACE)
+				gameState = GameState.INGAME;
 			break;
 		case PAUSED:
 			if (e.getKeyChar() == 'p')
@@ -227,4 +242,8 @@ public class Game extends Thread implements KeyListener {
 	public void keyReleased(KeyEvent e) {
 		keysPressed.put(e.getKeyCode(), false);
 	}
+
+    public static void main(final String[] args) {
+    	new Game();
+    }
 }

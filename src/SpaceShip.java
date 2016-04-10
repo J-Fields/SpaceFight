@@ -1,4 +1,4 @@
-import java.io.File;
+  import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -76,6 +76,12 @@ public class SpaceShip extends GameObject {
 		if (lives == 0)
 			isAlive = false;
 			
+	}
+	public double bounce(double velY, double velX){
+		if (height - posY == 0)
+			return -velY;	 
+		else
+			return -velX;	
 	}
 	
 }

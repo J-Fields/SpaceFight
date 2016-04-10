@@ -21,8 +21,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
-import javafx.scene.input.KeyCode;
-
 public class Game extends Thread implements KeyListener {
 	public enum GameState {
 		SPLASH,
@@ -31,6 +29,7 @@ public class Game extends Thread implements KeyListener {
 		INGAME
 	}
 	
+	private final static Game game = new Game();
     private GameState gameState = GameState.SPLASH;
     private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
     private SpaceShip player1;
@@ -51,6 +50,9 @@ public class Game extends Thread implements KeyListener {
     			.getDefaultConfiguration();
 	private BufferedImage splashImage;
 	
+	public static Game getInstance() {
+		return game;
+	}
 
     // create a hardware accelerated image
     public final BufferedImage create(final int width, final int height,
@@ -60,7 +62,7 @@ public class Game extends Thread implements KeyListener {
     }
 
     // Setup
-    public Game() {
+    private Game() {
     	initGame();
 
     	// JFrame
@@ -244,7 +246,13 @@ public class Game extends Thread implements KeyListener {
 		keysPressed.put(e.getKeyCode(), false);
 	}
 
-    public static void main(final String[] args) {
-    	new Game();
+    public static void main(final String[] args) {}
+    
+    public double getWidth() {
+    	return width;
+    }
+
+    public double getHeight() {
+    	return height;
     }
 }

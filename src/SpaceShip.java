@@ -1,4 +1,4 @@
-  import java.io.File;
+import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -36,8 +36,8 @@ public class SpaceShip extends GameObject {
 			velY += slowDown;
 		else
 			velY = 0;
-		velY = bounceOffCeiling(posY);
-		velX = bounceOffWall(posX);
+		bounceOffCeiling();
+		bounceOffWall();
 	}
 	
 	public void accelerate() {
@@ -79,16 +79,12 @@ public class SpaceShip extends GameObject {
 			isAlive = false;
 			
 	}
-	public double bounceOffCeiling(double posY){
-		if (posY < 0 || posY > height)
-			return -velY;
-			return velY;
+	public void bounceOffCeiling(){
+		if (posY < 0 || (posY+height) > Game.getInstance().getHeight())
+			velY = -velY;
 	}	
-	public double bounceOffWall(double posX){	
-		if(posX < 0 || posX > width)
-			return -velX;	
-			return velX;
+	public void bounceOffWall(){	
+		if(posX < 0 || (posX+width) > Game.getInstance().getWidth())
+			velX = -velX;	
 	}
-	
-	
 }

@@ -2,14 +2,14 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+/**
+ * Abstract class that provides the basic properties and methods a visible on-screen object needs.
+ */
 public abstract class GameObject {
-	protected double posX;
-	protected double posY;
-	protected double velX;
-	protected double velY;
+	protected double posX, posY;
+	protected double velX, velY;
 	protected double rotation;
-	protected int width;
-	protected int height;
+	protected int width, height;
 	protected BufferedImage image;
 	
 	public GameObject(double posX, double posY, double velX, double velY, int width, int height){

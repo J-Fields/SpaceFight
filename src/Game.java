@@ -133,6 +133,9 @@ public class Game extends Thread implements KeyListener {
     	}
     }
 
+    /**
+     * Specifies the game loop.
+     */
     public void run() {
     	backgroundGraphics = (Graphics2D) background.getGraphics();
     	long fpsWait = (long) (1.0 / 30 * 1000);
@@ -164,6 +167,9 @@ public class Game extends Thread implements KeyListener {
     	frame.dispose();
     }
 
+    /**
+     * Applies game logic each frame.
+     */
     public void updateGame() {
     	switch (gameState) {
     	case SPLASH:
@@ -171,6 +177,8 @@ public class Game extends Thread implements KeyListener {
     	case EXITED:
     		break;
     	case INGAME:
+    		// TODO:  Should be in the SpaceShip class
+    		// Make SpaceShip constructor take keybindings
     		if (keysPressed.containsKey(KeyEvent.VK_W) && keysPressed.get(KeyEvent.VK_W) == true)
 				player1.accelerate();
     		if (keysPressed.containsKey(KeyEvent.VK_A) && keysPressed.get(KeyEvent.VK_A) == true)

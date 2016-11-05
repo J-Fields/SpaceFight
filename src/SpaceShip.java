@@ -4,8 +4,9 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class SpaceShip extends GameObject {
-	boolean isAlive, canShoot;
-	int lives, cool, heat;
+	private static final double ROTATION_SPEED = .06;
+	private static final double FRICTION = .04;
+
 	public SpaceShip(double startX, double startY, double startRot) {
 		super(startX, startY, 0, 0, 80, 80);
 		rotation = startRot;
@@ -14,30 +15,26 @@ public class SpaceShip extends GameObject {
 		} catch (IOException e) {
 			System.out.println("Could not read the file");
 		}
-		isAlive = true;
-		lives = 3;
-		cool = 10;
-		heat = 0;
-		canShoot = true;
 	}
 	
 	public void update() {
 		super.update();
-		double slowDown = .04;
-		if (velX > slowDown)
-			velX -= slowDown;
-		else if (velX < -slowDown)
-			velX += slowDown;
+
+		if (velX > FRICTION)
+			velX -= FRICTION;
+		else if (velX < -FRICTION)
+			velX += FRICTION;
 		else
 			velX = 0;
-		if (velY > slowDown)
-			velY -= slowDown;
-		else if (velY < -slowDown)
-			velY += slowDown;
+
+		if (velY > FRICTION)
+			velY -= FRICTION;
+		else if (velY < -FRICTION)
+			velY += FRICTION;
 		else
 			velY = 0;
-		bounceOffCeiling();
-		bounceOffWall();
+
+		bounceOffWalls();
 	}
 	
 	public void accelerate() {
@@ -62,28 +59,12 @@ public class SpaceShip extends GameObject {
 	}
 
 	public void rotate(int direction) {
-		rotation += direction*.06;
+		rotation += direction*ROTATION_SPEED;
 	}
 	
-	public void shoot(int cool, int heat, boolean canShoot){ 
-		/*every second cool goes up by 1; every time you shoot heat 
-		goes up by 1  */
-		if(heat > cool)
-			canShoot = false;
-	}
-
-	public void gettingHit(int cool, int heat){
-		//if collision
-		lives--;
-		if (lives == 0)
-			isAlive = false;
-			
-	}
-	public void bounceOffCeiling(){
+	public void bounceOffWalls(){	
 		if (posY < 0 || (posY+height) > Game.getInstance().getHeight())
 			velY = -velY;
-	}	
-	public void bounceOffWall(){	
 		if(posX < 0 || (posX+width) > Game.getInstance().getWidth())
 			velX = -velX;	
 	}

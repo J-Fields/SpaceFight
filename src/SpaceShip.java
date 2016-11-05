@@ -63,9 +63,9 @@ public class SpaceShip extends GameObject {
 	}
 	
 	public void bounceOffWalls(){	
-		if (posY < 0 || (posY+height) > Game.getInstance().getHeight())
+		if (top() < 0 || bottom() > Game.getInstance().getHeight())
 			velY = -velY;
-		if(posX < 0 || (posX+width) > Game.getInstance().getWidth())
+		if(left() < 0 || right() > Game.getInstance().getWidth())
 			velX = -velX;	
 	}
 }

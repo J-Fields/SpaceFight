@@ -34,4 +34,20 @@ public abstract class GameObject {
 		transform.translate(-image.getWidth()/2, -image.getHeight()/2);
 		g.drawImage(image, transform, null);
     }
+	
+	public double left() {
+		return posX - width/2;
+	}
+
+	public double right() {
+		return posX + width/2;
+	}
+
+	public double top() {
+		return posY - height/2;
+	}
+
+	public double bottom() {
+		return posY + height/2;
+	}
 }

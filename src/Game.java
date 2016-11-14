@@ -186,6 +186,11 @@ public class Game extends Thread implements KeyListener {
 				player1.decelerate();
     		if (keysPressed.contains(KeyEvent.VK_D))
 				player1.rotate(1);
+    		if(keysPressed.contains(KeyEvent.VK_SHIFT)){
+    			Bullet b = player2.shoot();
+    			if(b != null)
+    				gameObjects.add(b);
+    		}
 
     		if (keysPressed.contains(KeyEvent.VK_UP))
 				player2.accelerate();
@@ -195,10 +200,15 @@ public class Game extends Thread implements KeyListener {
 				player2.decelerate();
     		if (keysPressed.contains(KeyEvent.VK_RIGHT))
 				player2.rotate(1);
-
+    		if(keysPressed.contains(KeyEvent.VK_SPACE)){
+    			Bullet b = player2.shoot();
+    			if(b != null)
+    				gameObjects.add(b);
+    		}
     		for (GameObject obj : gameObjects) {
     			obj.update();
     		}
+    		System.out.println(gameObjects.size());
     		break;
     		
     	}
@@ -262,4 +272,6 @@ public class Game extends Thread implements KeyListener {
     public double getHeight() {
     	return height;
     }
+    
+ 
 }

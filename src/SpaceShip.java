@@ -68,4 +68,12 @@ public class SpaceShip extends GameObject {
 		if(left() < 0 || right() > Game.getInstance().getWidth())
 			velX = -velX;	
 	}
+	Bullet shoot(){
+		
+   //pass the bullets starting value which will correspond to associated spaceships position.
+		Bullet x = new Bullet(this);
+		return x;
+		
+
+    }
 }

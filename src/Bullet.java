@@ -4,7 +4,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Bullet extends GameObject{
-	private static final double SPEED = 10;
+	private static final double SPEED = 600;
 	
 	public Bullet(SpaceShip s) {
 		super(s.posX, 

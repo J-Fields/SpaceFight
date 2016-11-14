@@ -21,9 +21,9 @@ public abstract class GameObject {
 		this.height = height;
 	}
 		
-	public void update() {
-		posX += velX;
-		posY += velY;
+	public void update(double delta) {
+		posX += velX * delta;
+		posY += velY * delta;
     }
 
 	public void render(Graphics2D g) {

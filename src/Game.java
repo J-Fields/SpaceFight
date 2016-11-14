@@ -137,10 +137,12 @@ public class Game extends Thread implements KeyListener {
      */
     public void run() {
     	backgroundGraphics = (Graphics2D) background.getGraphics();
-    	long fpsWait = (long) (1.0 / 30 * 1000);
+    	long fpsWait = (long) (1.0 / 60 * 1000);
     	main: while (gameState != GameState.EXITED) {
     		long renderStart = System.nanoTime();
-    		updateGame();
+
+    		// TODO:  Passing fpsWait into here assumes we're running at 60 FPS
+    		updateGame(fpsWait/1000.0);
 
     		// Update Graphics
     		do {
@@ -161,7 +163,6 @@ public class Game extends Thread implements KeyListener {
     			Thread.interrupted();
     			break;
     		}
-    		renderTime = (System.nanoTime() - renderStart) / 1000000;
     	}
     	frame.dispose();
     }
@@ -169,7 +170,7 @@ public class Game extends Thread implements KeyListener {
     /**
      * Applies game logic each frame.
      */
-    public void updateGame() {
+    public void updateGame(double delta) {
     	switch (gameState) {
     	case SPLASH:
     	case PAUSED:
@@ -179,13 +180,13 @@ public class Game extends Thread implements KeyListener {
     		// TODO:  Should be in the SpaceShip class
     		// Make SpaceShip constructor take keybindings
     		if (keysPressed.contains(KeyEvent.VK_W))
-				player1.accelerate();
+				player1.accelerate(delta);
     		if (keysPressed.contains(KeyEvent.VK_A))
-				player1.rotate(-1);
+				player1.rotate(-1, delta);
     		if (keysPressed.contains(KeyEvent.VK_S))
-				player1.decelerate();
+				player1.decelerate(delta);
     		if (keysPressed.contains(KeyEvent.VK_D))
-				player1.rotate(1);
+				player1.rotate(1, delta);
     		if(keysPressed.contains(KeyEvent.VK_SHIFT)){
     			Bullet b = player2.shoot();
     			if(b != null)
@@ -193,20 +194,20 @@ public class Game extends Thread implements KeyListener {
     		}
 
     		if (keysPressed.contains(KeyEvent.VK_UP))
-				player2.accelerate();
+				player2.accelerate(delta);
     		if (keysPressed.contains(KeyEvent.VK_LEFT))
-				player2.rotate(-1);
+				player2.rotate(-1, delta);
     		if (keysPressed.contains(KeyEvent.VK_DOWN))
-				player2.decelerate();
+				player2.decelerate(delta);
     		if (keysPressed.contains(KeyEvent.VK_RIGHT))
-				player2.rotate(1);
+				player2.rotate(1, delta);
     		if(keysPressed.contains(KeyEvent.VK_SPACE)){
     			Bullet b = player2.shoot();
     			if(b != null)
     				gameObjects.add(b);
     		}
     		for (GameObject obj : gameObjects) {
-    			obj.update();
+    			obj.update(delta);
     		}
     		System.out.println(gameObjects.size());
     		break;

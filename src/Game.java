@@ -15,7 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -34,8 +34,7 @@ public class Game extends Thread implements KeyListener {
     private ArrayList<GameObject> gameObjects = new ArrayList<GameObject>();
     private SpaceShip player1;
     private SpaceShip player2;
-    private HashMap<Integer, Boolean> keysPressed = new HashMap<Integer, Boolean>();
-    
+    private HashSet<Integer> keysPressed = new HashSet<Integer>();
     private Canvas canvas;
     private BufferStrategy strategy;
     private BufferedImage background;
@@ -133,12 +132,17 @@ public class Game extends Thread implements KeyListener {
     	}
     }
 
+    /**
+     * Specifies the game loop.
+     */
     public void run() {
     	backgroundGraphics = (Graphics2D) background.getGraphics();
-    	long fpsWait = (long) (1.0 / 30 * 1000);
+    	long fpsWait = (long) (1.0 / 60 * 1000);
     	main: while (gameState != GameState.EXITED) {
     		long renderStart = System.nanoTime();
-    		updateGame();
+
+    		// TODO:  Passing fpsWait into here assumes we're running at 60 FPS
+    		updateGame(fpsWait/1000.0);
 
     		// Update Graphics
     		do {
@@ -159,39 +163,53 @@ public class Game extends Thread implements KeyListener {
     			Thread.interrupted();
     			break;
     		}
-    		renderTime = (System.nanoTime() - renderStart) / 1000000;
     	}
     	frame.dispose();
     }
 
-    public void updateGame() {
+    /**
+     * Applies game logic each frame.
+     */
+    public void updateGame(double delta) {
     	switch (gameState) {
     	case SPLASH:
     	case PAUSED:
     	case EXITED:
     		break;
     	case INGAME:
-    		if (keysPressed.containsKey(KeyEvent.VK_W) && keysPressed.get(KeyEvent.VK_W) == true)
-				player1.accelerate();
-    		if (keysPressed.containsKey(KeyEvent.VK_A) && keysPressed.get(KeyEvent.VK_A) == true)
-				player1.rotate(-1);
-    		if (keysPressed.containsKey(KeyEvent.VK_S) && keysPressed.get(KeyEvent.VK_S) == true)
-				player1.decelerate();
-    		if (keysPressed.containsKey(KeyEvent.VK_D) && keysPressed.get(KeyEvent.VK_D) == true)
-				player1.rotate(1);
-
-    		if (keysPressed.containsKey(KeyEvent.VK_UP) && keysPressed.get(KeyEvent.VK_UP) == true)
-				player2.accelerate();
-    		if (keysPressed.containsKey(KeyEvent.VK_LEFT) && keysPressed.get(KeyEvent.VK_LEFT) == true)
-				player2.rotate(-1);
-    		if (keysPressed.containsKey(KeyEvent.VK_DOWN) && keysPressed.get(KeyEvent.VK_DOWN) == true)
-				player2.decelerate();
-    		if (keysPressed.containsKey(KeyEvent.VK_RIGHT) && keysPressed.get(KeyEvent.VK_RIGHT) == true)
-				player2.rotate(1);
-
-    		for (GameObject obj : gameObjects) {
-    			obj.update();
+    		// TODO:  Should be in the SpaceShip class
+    		// Make SpaceShip constructor take keybindings
+    		if (keysPressed.contains(KeyEvent.VK_W))
+				player1.accelerate(delta);
+    		if (keysPressed.contains(KeyEvent.VK_A))
+				player1.rotate(-1, delta);
+    		if (keysPressed.contains(KeyEvent.VK_S))
+				player1.decelerate(delta);
+    		if (keysPressed.contains(KeyEvent.VK_D))
+				player1.rotate(1, delta);
+    		if(keysPressed.contains(KeyEvent.VK_SHIFT)){
+    			Bullet b = player2.shoot();
+    			if(b != null)
+    				gameObjects.add(b);
     		}
+
+    		if (keysPressed.contains(KeyEvent.VK_UP))
+				player2.accelerate(delta);
+    		if (keysPressed.contains(KeyEvent.VK_LEFT))
+				player2.rotate(-1, delta);
+    		if (keysPressed.contains(KeyEvent.VK_DOWN))
+				player2.decelerate(delta);
+    		if (keysPressed.contains(KeyEvent.VK_RIGHT))
+				player2.rotate(1, delta);
+    		if(keysPressed.contains(KeyEvent.VK_SPACE)){
+    			Bullet b = player2.shoot();
+    			if(b != null)
+    				gameObjects.add(b);
+    		}
+    		for (GameObject obj : gameObjects) {
+    			obj.update(delta);
+    		}
+    		System.out.println(gameObjects.size());
     		break;
     		
     	}
@@ -234,16 +252,16 @@ public class Game extends Thread implements KeyListener {
 			break;
 		case EXITED:
 		case INGAME:
-			if ((!keysPressed.containsKey('p') || keysPressed.get('p') == false) && e.getKeyChar() == 'p') {
+			if (e.getKeyChar() == 'p') {
 				gameState = GameState.PAUSED;
 			}
 		}
-		keysPressed.put(e.getKeyCode(), true);
+		keysPressed.add(e.getKeyCode());
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		keysPressed.put(e.getKeyCode(), false);
+		keysPressed.remove(e.getKeyCode());
 	}
 
     public static void main(final String[] args) {}
@@ -255,4 +273,6 @@ public class Game extends Thread implements KeyListener {
     public double getHeight() {
     	return height;
     }
+    
+ 
 }

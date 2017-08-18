@@ -4,8 +4,11 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class SpaceShip extends GameObject {
-	boolean isAlive, canShoot;
-	int lives, cool, heat;
+	private static final double SPACESHIP_SPEED = 400;
+	private static final double ROTATION_SPEED = 4;
+	private static final double FRICTION = 4;
+	private static final double DECELERATE_RATE = 200;
+
 	public SpaceShip(double startX, double startY, double startRot) {
 		super(startX, startY, 0, 0, 80, 80);
 		rotation = startRot;
@@ -14,77 +17,62 @@ public class SpaceShip extends GameObject {
 		} catch (IOException e) {
 			System.out.println("Could not read the file");
 		}
-		isAlive = true;
-		lives = 3;
-		cool = 10;
-		heat = 0;
-		canShoot = true;
 	}
 	
-	public void update() {
-		super.update();
-		double slowDown = .04;
-		if (velX > slowDown)
-			velX -= slowDown;
-		else if (velX < -slowDown)
-			velX += slowDown;
+	public void update(double delta) {
+		super.update(delta);
+
+		if (velX > FRICTION)
+			velX -= FRICTION * delta;
+		else if (velX < -FRICTION)
+			velX += FRICTION * delta;
 		else
 			velX = 0;
-		if (velY > slowDown)
-			velY -= slowDown;
-		else if (velY < -slowDown)
-			velY += slowDown;
+
+		if (velY > FRICTION)
+			velY -= FRICTION * delta;
+		else if (velY < -FRICTION)
+			velY += FRICTION * delta;
 		else
 			velY = 0;
-		bounceOffCeiling();
-		bounceOffWall();
+
+		bounceOffWalls();
 	}
 	
-	public void accelerate() {
-		velX += Math.cos(rotation)*.3;
-		velY += Math.sin(rotation)*.3;
+	public void accelerate(double delta) {
+		velX += Math.cos(rotation) * SPACESHIP_SPEED * delta;
+		velY += Math.sin(rotation) * SPACESHIP_SPEED * delta;
 	}
 
-	public void decelerate() {
-		double slowDown = .15;
+	public void decelerate(double delta) {
+		double slowDown = DECELERATE_RATE;
 		if (velX > slowDown)
-			velX -= slowDown;
+			velX -= slowDown * delta;
 		else if (velX < -slowDown)
-			velX += slowDown;
+			velX += slowDown * delta;
 		else
 			velX = 0;
 		if (velY > slowDown)
-			velY -= slowDown;
+			velY -= slowDown * delta;
 		else if (velY < -slowDown)
-			velY += slowDown;
+			velY += slowDown * delta;
 		else
 			velY = 0;
 	}
 
-	public void rotate(int direction) {
-		rotation += direction*.06;
+	public void rotate(int direction, double delta) {
+		rotation += direction * ROTATION_SPEED * delta;
 	}
 	
-	public void shoot(int cool, int heat, boolean canShoot){ 
-		/*every second cool goes up by 1; every time you shoot heat 
-		goes up by 1  */
-		if(heat > cool)
-			canShoot = false;
-	}
-
-	public void gettingHit(int cool, int heat){
-		//if collision
-		lives--;
-		if (lives == 0)
-			isAlive = false;
-			
-	}
-	public void bounceOffCeiling(){
-		if (posY < 0 || (posY+height) > Game.getInstance().getHeight())
+	public void bounceOffWalls() {
+		if (top() < 0 || bottom() > Game.getInstance().getHeight())
 			velY = -velY;
-	}	
-	public void bounceOffWall(){	
-		if(posX < 0 || (posX+width) > Game.getInstance().getWidth())
+		if(left() < 0 || right() > Game.getInstance().getWidth())
 			velX = -velX;	
 	}
+
+	public Bullet shoot() {
+		Bullet x = new Bullet(this);
+		return x;
+    }
 }
